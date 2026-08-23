@@ -30,9 +30,9 @@ jobs:
           - name: centos-stream
             image: quay.io/centos/centos:stream9
           - name: rockylinux
-            image: rockylinux:10.2
+            image: rockylinux:10
           - name: almalinux
-            image: almalinux:10.2
+            image: almalinux:10
           - name: opensuse-leap
             image: opensuse/leap:latest
 
