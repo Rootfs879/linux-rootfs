@@ -1,0 +1,135 @@
+name: Daily Multi-Architecture RootFS Generator
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  check-and-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [amd64, arm64, armv7, 386]
+        distro:
+          - name: ubuntu
+            image: ubuntu:latest
+          - name: debian
+            image: debian:latest
+          - name: alpine
+            image: alpine:latest
+          - name: kali-linux
+            image: kalilinux/kali-rolling:latest
+          - name: fedora
+            image: fedora:latest
+          - name: archlinux
+            image: archlinux:latest
+          - name: centos-stream
+            image: quay.io/centos/centos:stream9
+          - name: rockylinux
+            image: rockylinux:9
+          - name: almalinux
+            image: almalinux:9
+          - name: opensuse-leap
+            image: opensuse/leap:latest
+
+        exclude:
+          - arch: arm64
+            distro: { name: archlinux }
+          - arch: armv7
+            distro: { name: archlinux }
+          - arch: 386
+            distro: { name: archlinux }
+          - arch: 386
+            distro: { name: rockylinux }
+          - arch: armv7
+            distro: { name: rockylinux }
+          - arch: 386
+            distro: { name: almalinux }
+          - arch: armv7
+            distro: { name: almalinux }
+          - arch: 386
+            distro: { name: centos-stream }
+          - arch: armv7
+            distro: { name: centos-stream }
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Fetch Manifest & Check Digest
+        id: check_digest
+        run: |
+          DISTRO_NAME="${{ matrix.distro.name }}"
+          IMAGE="${{ matrix.distro.image }}"
+          ARCH="${{ matrix.arch }}"
+          
+          PLATFORM="linux/$ARCH"
+          if [ "$ARCH" = "armv7" ]; then
+            PLATFORM="linux/arm/v7"
+          fi
+
+          docker pull --platform "$PLATFORM" "$IMAGE" > /dev/null
+          DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' "$IMAGE" | cut -d'@' -f2)
+          
+          echo "CURRENT_DIGEST=$DIGEST" >> $GITHUB_ENV
+          
+          DIGEST_FILE="digest_${DISTRO_NAME}_${ARCH}.txt"
+          echo "$DIGEST" > "$DIGEST_FILE"
+          echo "DIGEST_FILE=$DIGEST_FILE" >> $GITHUB_ENV
+
+      - name: Cache Image State
+        id: cache_check
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.DIGEST_FILE }}
+          key: digest-${{ matrix.distro.name }}-${{ matrix.arch }}-${{ env.CURRENT_DIGEST }}
+
+      - name: Build RootFS on New Version
+        if: steps.cache_check.outputs.cache-hit != 'true'
+        run: |
+          DISTRO_NAME="${{ matrix.distro.name }}"
+          IMAGE="${{ matrix.distro.image }}"
+          ARCH="${{ matrix.arch }}"
+          
+          DATE=$(date +'%m-%d-%Y')
+          TAG_NAME="${DATE}-${ARCH}"
+          
+          PLATFORM="linux/$ARCH"
+          if [ "$ARCH" = "armv7" ]; then
+            PLATFORM="linux/arm/v7"
+          fi
+
+          echo "New version detected for $DISTRO_NAME ($ARCH)!"
+          
+          CONTAINER_ID=$(docker create --platform "$PLATFORM" "$IMAGE")
+          FILE_NAME="${DISTRO_NAME}-rootfs-${ARCH}.tar.gz"
+          docker export $CONTAINER_ID | gzip -9 > "$FILE_NAME"
+          docker rm $CONTAINER_ID
+
+          echo "FILE_NAME=$FILE_NAME" >> $GITHUB_ENV
+          echo "RELEASE_TAG=$TAG_NAME" >> $GITHUB_ENV
+          echo "BUILD_DATE=$DATE" >> $GITHUB_ENV
+          echo "HAS_NEW_BUILD=true" >> $GITHUB_ENV
+
+      - name: Upload to GitHub Release
+        if: env.HAS_NEW_BUILD == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: "${{ env.RELEASE_TAG }}"
+          body: |
+            The latest version update is detected and processed automatically.
+            * Distro: ${{ matrix.distro.name }}
+            * Release Date: ${{ env.BUILD_DATE }}
+            * Architecture: ${{ matrix.arch }}
+            * Digest SHA256: `${{ env.CURRENT_DIGEST }}`
+          files: ${{ env.FILE_NAME }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
