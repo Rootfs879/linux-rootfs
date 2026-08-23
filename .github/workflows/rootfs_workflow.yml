@@ -19,6 +19,8 @@ jobs:
             image: ubuntu:latest
           - name: debian
             image: debian:latest
+          - name: devuan
+            image: devuan/devuan:latest
           - name: alpine
             image: alpine:latest
           - name: kali-linux
@@ -29,8 +31,20 @@ jobs:
             image: archlinux:latest
           - name: centos-stream
             image: quay.io/centos/centos:stream9
+          - name: rockylinux
+            image: rockylinux:9
+          - name: almalinux
+            image: almalinux:9
           - name: opensuse-leap
             image: opensuse/leap:latest
+          - name: opensuse-tumbleweed
+            image: opensuse/tumbleweed:latest
+          - name: openwrt
+            image: openwrt/rootfs:latest
+          - name: openeuler
+            image: openeuler/openeuler:latest
+          - name: openkylin
+            image: openkylin/openkylin:latest
           - name: busybox
             image: busybox:latest
           - name: voidlinux
@@ -41,10 +55,10 @@ jobs:
             image: amazonlinux:latest
           - name: oraclelinux
             image: oraclelinux:9
-          - name: rockylinux
-            image: rockylinux:9
-          - name: almalinux
-            image: almalinux:9
+          - name: gentoo
+            image: gentoo/stage3:latest
+          - name: nixos
+            image: nixos/nix:latest
 
         exclude:
           - arch: arm64
@@ -56,6 +70,10 @@ jobs:
           - arch: 386
             distro: { name: ubuntu }
           - arch: 386
+            distro: { name: devuan }
+          - arch: armv7
+            distro: { name: devuan }
+          - arch: 386
             distro: { name: fedora }
           - arch: armv7
             distro: { name: fedora }
@@ -64,9 +82,33 @@ jobs:
           - arch: armv7
             distro: { name: opensuse-leap }
           - arch: 386
+            distro: { name: opensuse-tumbleweed }
+          - arch: armv7
+            distro: { name: opensuse-tumbleweed }
+          - arch: 386
+            distro: { name: openwrt }
+          - arch: armv7
+            distro: { name: openwrt }
+          - arch: 386
+            distro: { name: openeuler }
+          - arch: armv7
+            distro: { name: openeuler }
+          - arch: 386
+            distro: { name: openkylin }
+          - arch: armv7
+            distro: { name: openkylin }
+          - arch: 386
             distro: { name: centos-stream }
           - arch: armv7
             distro: { name: centos-stream }
+          - arch: 386
+            distro: { name: rockylinux }
+          - arch: armv7
+            distro: { name: rockylinux }
+          - arch: 386
+            distro: { name: almalinux }
+          - arch: armv7
+            distro: { name: almalinux }
           - arch: arm64
             distro: { name: voidlinux }
           - arch: armv7
@@ -87,14 +129,14 @@ jobs:
             distro: { name: oraclelinux }
           - arch: armv7
             distro: { name: oraclelinux }
-          - arch: 386
-            distro: { name: rockylinux }
           - arch: armv7
-            distro: { name: rockylinux }
+            distro: { name: gentoo }
           - arch: 386
-            distro: { name: almalinux }
+            distro: { name: gentoo }
           - arch: armv7
-            distro: { name: almalinux }
+            distro: { name: nixos }
+          - arch: 386
+            distro: { name: nixos }
 
     steps:
       - name: Checkout Repository
@@ -182,3 +224,4 @@ jobs:
           files: ${{ env.FILE_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
