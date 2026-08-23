@@ -17,6 +17,13 @@ All builds are regularly kept up-to-date with the latest release packages.
 | **Arch Linux** | `.tar.gz` |
 | **CentOS Stream** | `.tar.gz` |
 | **openSUSE Leap** | `.tar.gz` |
+| **BusyBox** | `.tar.gz` |
+| **Void Linux** | `.tar.gz` |
+| **Amazon Linux** | `.tar.gz` |
+| **Clear Linux** | `.tar.gz` |
+| **Oracle Linux** | `.tar.gz` |
+| **Rocky Linux** | `.tar.gz` |
+| **AlmaLinux** | `.tar.gz` |
 
 ---
 
