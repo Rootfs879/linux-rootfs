@@ -41,6 +41,10 @@ jobs:
             image: amazonlinux:latest
           - name: oraclelinux
             image: oraclelinux:9
+          - name: rockylinux
+            image: rockylinux:9
+          - name: almalinux
+            image: almalinux:9
 
         exclude:
           - arch: arm64
@@ -83,6 +87,14 @@ jobs:
             distro: { name: oraclelinux }
           - arch: armv7
             distro: { name: oraclelinux }
+          - arch: 386
+            distro: { name: rockylinux }
+          - arch: armv7
+            distro: { name: rockylinux }
+          - arch: 386
+            distro: { name: almalinux }
+          - arch: armv7
+            distro: { name: almalinux }
 
     steps:
       - name: Checkout Repository
