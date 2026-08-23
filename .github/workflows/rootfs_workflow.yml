@@ -43,10 +43,8 @@ jobs:
             distro: { name: archlinux }
           - arch: 386
             distro: { name: archlinux }
-
           - arch: 386
             distro: { name: ubuntu }
-
           - arch: 386
             distro: { name: fedora }
           - arch: armv7
@@ -55,7 +53,6 @@ jobs:
             distro: { name: opensuse-leap }
           - arch: armv7
             distro: { name: opensuse-leap }
-
           - arch: 386
             distro: { name: centos-stream }
           - arch: armv7
@@ -88,9 +85,20 @@ jobs:
             PLATFORM="linux/arm/v7"
           fi
 
-          docker pull --platform "$PLATFORM" "$IMAGE" > /dev/null
-          DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' "$IMAGE" | cut -d'@' -f2)
-          
+          if ! docker pull --platform "$PLATFORM" "$IMAGE"; then
+            echo "::warning ::Failed to pull $IMAGE for $PLATFORM. Skipping."
+            echo "SKIP_JOB=true" >> $GITHUB_ENV
+            exit 0
+          fi
+
+          DIGEST=$(docker inspect --format='{{if .RepoDigests}}{{index .RepoDigests 0}}{{else}}{{end}}' "$IMAGE" | cut -d'@' -f2)
+
+          if [ -z "$DIGEST" ]; then
+            echo "::warning ::Could not extract digest for $IMAGE. Skipping."
+            echo "SKIP_JOB=true" >> $GITHUB_ENV
+            exit 0
+          fi
+
           echo "CURRENT_DIGEST=$DIGEST" >> $GITHUB_ENV
           
           DIGEST_FILE="digest_${DISTRO_NAME}_${ARCH}.txt"
@@ -98,6 +106,7 @@ jobs:
           echo "DIGEST_FILE=$DIGEST_FILE" >> $GITHUB_ENV
 
       - name: Cache Image State
+        if: env.SKIP_JOB != 'true'
         id: cache_check
         uses: actions/cache@v4
         with:
@@ -105,7 +114,7 @@ jobs:
           key: digest-${{ matrix.distro.name }}-${{ matrix.arch }}-${{ env.CURRENT_DIGEST }}
 
       - name: Build RootFS on New Version
-        if: steps.cache_check.outputs.cache-hit != 'true'
+        if: env.SKIP_JOB != 'true' && steps.cache_check.outputs.cache-hit != 'true'
         run: |
           DISTRO_NAME="${{ matrix.distro.name }}"
           IMAGE="${{ matrix.distro.image }}"
@@ -119,8 +128,6 @@ jobs:
             PLATFORM="linux/arm/v7"
           fi
 
-          echo "New version detected for $DISTRO_NAME ($ARCH)!"
-          
           CONTAINER_ID=$(docker create --platform "$PLATFORM" "$IMAGE")
           FILE_NAME="${DISTRO_NAME}-rootfs-${ARCH}.tar.gz"
           docker export $CONTAINER_ID | gzip -9 > "$FILE_NAME"
@@ -132,17 +139,16 @@ jobs:
           echo "HAS_NEW_BUILD=true" >> $GITHUB_ENV
 
       - name: Upload to GitHub Release
-        if: env.HAS_NEW_BUILD == 'true'
+        if: env.SKIP_JOB != 'true' && env.HAS_NEW_BUILD == 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.RELEASE_TAG }}
           name: "${{ env.RELEASE_TAG }}"
           body: |
-            The latest version update is detected and processed automatically.
-            * Distro: ${{ matrix.distro.name }}
-            * Release Date: ${{ env.BUILD_DATE }}
-            * Architecture: ${{ matrix.arch }}
-            * Digest SHA256: `${{ env.CURRENT_DIGEST }}`
+            Automated RootFS update for **${{ matrix.arch }}** architecture.
+            * Distribution: ${{ matrix.distro.name }}
+            * Build Date: ${{ env.BUILD_DATE }}
+            * SHA256 Digest: `${{ env.CURRENT_DIGEST }}`
           files: ${{ env.FILE_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
