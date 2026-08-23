@@ -31,6 +31,16 @@ jobs:
             image: quay.io/centos/centos:stream9
           - name: opensuse-leap
             image: opensuse/leap:latest
+          - name: busybox
+            image: busybox:latest
+          - name: voidlinux
+            image: ghcr.io/void-linux/void-linux:latest-full-x86_64
+          - name: clearlinux
+            image: clearlinux:latest
+          - name: amazonlinux
+            image: amazonlinux:latest
+          - name: oraclelinux
+            image: oraclelinux:9
 
         exclude:
           - arch: arm64
@@ -53,6 +63,26 @@ jobs:
             distro: { name: centos-stream }
           - arch: armv7
             distro: { name: centos-stream }
+          - arch: arm64
+            distro: { name: voidlinux }
+          - arch: armv7
+            distro: { name: voidlinux }
+          - arch: 386
+            distro: { name: voidlinux }
+          - arch: arm64
+            distro: { name: clearlinux }
+          - arch: armv7
+            distro: { name: clearlinux }
+          - arch: 386
+            distro: { name: clearlinux }
+          - arch: 386
+            distro: { name: amazonlinux }
+          - arch: armv7
+            distro: { name: amazonlinux }
+          - arch: 386
+            distro: { name: oraclelinux }
+          - arch: armv7
+            distro: { name: oraclelinux }
 
     steps:
       - name: Checkout Repository
@@ -140,4 +170,3 @@ jobs:
           files: ${{ env.FILE_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
