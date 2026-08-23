@@ -16,8 +16,6 @@ All builds are regularly kept up-to-date with the latest release packages.
 | **Fedora** | `.tar.gz` |
 | **Arch Linux** | `.tar.gz` |
 | **CentOS Stream** | `.tar.gz` |
-| **Rocky Linux** | `.tar.gz` |
-| **AlmaLinux** | `.tar.gz` |
 | **openSUSE Leap** | `.tar.gz` |
 
 ---
