@@ -24,6 +24,9 @@ All builds are regularly kept up-to-date with the latest release packages.
 | **Oracle Linux** | `.tar.gz` |
 | **Rocky Linux** | `.tar.gz` |
 | **AlmaLinux** | `.tar.gz` |
+| **Gentoo Linux** | `.tar.gz` |
+| **OpenWRT** | `.tar.gz` |
+| **openKylin** | `.tar.gz` |
 
 ---
 
