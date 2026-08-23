@@ -43,6 +43,23 @@ jobs:
             distro: { name: archlinux }
           - arch: 386
             distro: { name: archlinux }
+
+          - arch: 386
+            distro: { name: ubuntu }
+
+          - arch: 386
+            distro: { name: fedora }
+          - arch: armv7
+            distro: { name: fedora }
+          - arch: 386
+            distro: { name: opensuse-leap }
+          - arch: armv7
+            distro: { name: opensuse-leap }
+
+          - arch: 386
+            distro: { name: centos-stream }
+          - arch: armv7
+            distro: { name: centos-stream }
           - arch: 386
             distro: { name: rockylinux }
           - arch: armv7
@@ -51,10 +68,6 @@ jobs:
             distro: { name: almalinux }
           - arch: armv7
             distro: { name: almalinux }
-          - arch: 386
-            distro: { name: centos-stream }
-          - arch: armv7
-            distro: { name: centos-stream }
 
     steps:
       - name: Checkout Repository
