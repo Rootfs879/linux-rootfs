@@ -29,10 +29,6 @@ jobs:
             image: archlinux:latest
           - name: centos-stream
             image: quay.io/centos/centos:stream9
-          - name: rockylinux
-            image: rockylinux:9
-          - name: almalinux
-            image: almalinux:9
           - name: opensuse-leap
             image: opensuse/leap:latest
 
@@ -57,14 +53,6 @@ jobs:
             distro: { name: centos-stream }
           - arch: armv7
             distro: { name: centos-stream }
-          - arch: 386
-            distro: { name: rockylinux }
-          - arch: armv7
-            distro: { name: rockylinux }
-          - arch: 386
-            distro: { name: almalinux }
-          - arch: armv7
-            distro: { name: almalinux }
 
     steps:
       - name: Checkout Repository
@@ -152,3 +140,4 @@ jobs:
           files: ${{ env.FILE_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
