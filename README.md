@@ -28,6 +28,9 @@ All builds are regularly kept up-to-date with the latest release packages.
 | **OpenWRT** | `.tar.gz` |
 | **openKylin** | `.tar.gz` |
 | **openSUSE Tumbleweed** | `.tar.gz` |
+| **Gentoo** | `tar.gz` |
+| **NixOS** | `tar.gz` |
+| **Devuan** | `.tar.gz` |
 
 ---
 
