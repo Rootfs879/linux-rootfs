@@ -2,7 +2,7 @@ name: Daily Multi-Architecture RootFS Generator
 
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 5,11,17,23 * * *'
   workflow_dispatch:
 
 jobs:
@@ -61,20 +61,27 @@ jobs:
             image: nixos/nix:latest
 
         exclude:
+          # Arch Linux (hanya x86_64)
           - arch: arm64
             distro: { name: archlinux }
           - arch: armv7
             distro: { name: archlinux }
           - arch: 386
             distro: { name: archlinux }
+
+          # Ubuntu (tidak ada 386, tapi armv7 AKTIF)
           - arch: 386
             distro: { name: ubuntu }
-          - arch: 386
+
+          # Devuan
+          - arch: arm64
             distro: { name: devuan }
           - arch: armv7
             distro: { name: devuan }
-          - arch: arm64
+          - arch: 386
             distro: { name: devuan }
+
+          # Distro tanpa dukungan 32-bit (386 / armv7)
           - arch: 386
             distro: { name: fedora }
           - arch: armv7
@@ -220,7 +227,11 @@ jobs:
           name: "${{ env.RELEASE_TAG }}"
           body: |
             Automated RootFS update for **${{ matrix.arch }}** architecture.
-            * Latest Distribution: ${{ matrix.distro.name }}
+            
+            Latest distribution update: **${{ matrix.distro.name }}**
+            
+            * Distribution: ${{ matrix.distro.name }}
+            * Image Source: `${{ matrix.distro.image }}`
             * Build Date: ${{ env.BUILD_DATE }}
             * SHA256 Digest: `${{ env.CURRENT_DIGEST }}`
           files: ${{ env.FILE_NAME }}
