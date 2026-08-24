@@ -61,27 +61,20 @@ jobs:
             image: nixos/nix:latest
 
         exclude:
-          # Arch Linux (hanya x86_64)
           - arch: arm64
             distro: { name: archlinux }
           - arch: armv7
             distro: { name: archlinux }
           - arch: 386
             distro: { name: archlinux }
-
-          # Ubuntu (tidak ada 386, tapi armv7 AKTIF)
           - arch: 386
             distro: { name: ubuntu }
-
-          # Devuan
           - arch: arm64
             distro: { name: devuan }
           - arch: armv7
             distro: { name: devuan }
           - arch: 386
             distro: { name: devuan }
-
-          # Distro tanpa dukungan 32-bit (386 / armv7)
           - arch: 386
             distro: { name: fedora }
           - arch: armv7
@@ -201,8 +194,9 @@ jobs:
           IMAGE="${{ matrix.distro.image }}"
           ARCH="${{ matrix.arch }}"
           
-          DATE=$(date +'%m-%d-%Y')
-          TAG_NAME="${DATE}-${ARCH}"
+          # Menambahkan format Jam (HH) dan Menit (MM) pada tag release
+          DATETIME=$(date +'%m-%d-%Y-%H%M')
+          TAG_NAME="${DATETIME}-${ARCH}"
           
           PLATFORM="linux/$ARCH"
           if [ "$ARCH" = "armv7" ]; then
@@ -216,7 +210,7 @@ jobs:
 
           echo "FILE_NAME=$FILE_NAME" >> $GITHUB_ENV
           echo "RELEASE_TAG=$TAG_NAME" >> $GITHUB_ENV
-          echo "BUILD_DATE=$DATE" >> $GITHUB_ENV
+          echo "BUILD_DATE=$(date +'%m-%d-%Y %H:%M UTC')" >> $GITHUB_ENV
           echo "HAS_NEW_BUILD=true" >> $GITHUB_ENV
 
       - name: Upload to GitHub Release
