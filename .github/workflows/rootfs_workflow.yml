@@ -220,7 +220,7 @@ jobs:
           name: "${{ env.RELEASE_TAG }}"
           body: |
             Automated RootFS update for **${{ matrix.arch }}** architecture.
-            * Distribution: ${{ matrix.distro.name }}
+            * Latest Distribution: ${{ matrix.distro.name }}
             * Build Date: ${{ env.BUILD_DATE }}
             * SHA256 Digest: `${{ env.CURRENT_DIGEST }}`
           files: ${{ env.FILE_NAME }}
