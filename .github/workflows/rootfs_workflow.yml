@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       force_build:
-        description: 'Paksa Build Ulang (Abaikan Cache)'
+        description: 'Force re-build (Bypass Cache)'
         required: false
         type: boolean
         default: true
@@ -200,8 +200,8 @@ jobs:
           IMAGE="${{ matrix.distro.image }}"
           ARCH="${{ matrix.arch }}"
           
-          DATETIME=$(date +'%m-%d-%Y-%H%M')
-          TAG_NAME="${DATETIME}-${ARCH}"
+          DATE_ONLY=$(date +'%m-%d-%Y')
+          TAG_NAME="${DATE_ONLY}-${ARCH}"
           
           PLATFORM="linux/$ARCH"
           if [ "$ARCH" = "armv7" ]; then
@@ -215,7 +215,7 @@ jobs:
 
           echo "FILE_NAME=$FILE_NAME" >> $GITHUB_ENV
           echo "RELEASE_TAG=$TAG_NAME" >> $GITHUB_ENV
-          echo "BUILD_DATE=$(date +'%m-%d-%Y %H:%M UTC')" >> $GITHUB_ENV
+          echo "BUILD_DATE=$DATE_ONLY" >> $GITHUB_ENV
           echo "HAS_NEW_BUILD=true" >> $GITHUB_ENV
 
       - name: Upload to GitHub Release
@@ -223,17 +223,14 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.RELEASE_TAG }}
-          name: "${{ env.RELEASE_TAG }}"
+          name: "RootFS Build - ${{ env.RELEASE_TAG }}"
+          append_body: true
           body: |
-            Automated RootFS update for **${{ matrix.arch }}** architecture.
-            
-            Latest distribution update: **${{ matrix.distro.name }}**
-            
-            * Distribution: ${{ matrix.distro.name }}
+            ### Update: **${{ matrix.distro.name }}** (`${{ matrix.arch }}`)
             * Image Source: `${{ matrix.distro.image }}`
             * Build Date: ${{ env.BUILD_DATE }}
             * SHA256 Digest: `${{ env.CURRENT_DIGEST }}`
+            ---
           files: ${{ env.FILE_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
