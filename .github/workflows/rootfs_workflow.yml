@@ -73,6 +73,8 @@ jobs:
             distro: { name: devuan }
           - arch: armv7
             distro: { name: devuan }
+          - arch: arm64
+            distro: { name: devuan }
           - arch: 386
             distro: { name: fedora }
           - arch: armv7
