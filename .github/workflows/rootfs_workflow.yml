@@ -200,7 +200,7 @@ jobs:
             PLATFORM="linux/arm/v7"
           fi
 
-          CONTAINER_ID=$(docker create --platform "$PLATFORM" "$IMAGE")
+          CONTAINER_ID=$(docker create --platform "$PLATFORM" "$IMAGE" true)
           FILE_NAME="${DISTRO_NAME}-rootfs-${ARCH}.tar.gz"
           docker export $CONTAINER_ID | gzip -9 > "$FILE_NAME"
           docker rm $CONTAINER_ID
@@ -224,4 +224,3 @@ jobs:
           files: ${{ env.FILE_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
