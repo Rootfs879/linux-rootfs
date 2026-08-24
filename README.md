@@ -27,6 +27,7 @@ All builds are regularly kept up-to-date with the latest release packages.
 | **Gentoo Linux** | `.tar.gz` |
 | **OpenWRT** | `.tar.gz` |
 | **openKylin** | `.tar.gz` |
+| **openSUSE Tumbleweed** | `.tar.gz` |
 
 ---
 
