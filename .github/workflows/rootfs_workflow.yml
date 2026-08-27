@@ -186,7 +186,7 @@ jobs:
           echo "DIGEST_FILE=$DIGEST_FILE" >> $GITHUB_ENV
 
       - name: Cache Image State
-        if: env.SKIP_JOB != 'true' && github.event.inputs.force_build != 'true'
+        if: env.SKIP_JOB != 'true' && (github.event_name != 'workflow_dispatch' || github.event.inputs.force_build != 'true')
         id: cache_check
         uses: actions/cache@v4
         with:
@@ -194,7 +194,7 @@ jobs:
           key: digest-${{ matrix.distro.name }}-${{ matrix.arch }}-${{ env.CURRENT_DIGEST }}
 
       - name: Build RootFS on New Version
-        if: env.SKIP_JOB != 'true' && (steps.cache_check.outputs.cache-hit != 'true' || github.event.inputs.force_build == 'true')
+        if: env.SKIP_JOB != 'true' && (steps.cache_check.outputs.cache-hit != 'true' || (github.event_name == 'workflow_dispatch' && github.event.inputs.force_build == 'true'))
         run: |
           DISTRO_NAME="${{ matrix.distro.name }}"
           IMAGE="${{ matrix.distro.image }}"
