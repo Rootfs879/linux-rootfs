@@ -31,6 +31,8 @@ jobs:
             image: alpine:latest
           - name: kali-linux
             image: kalilinux/kali-rolling:latest
+          - name: parrot
+            image: parrotsec/core:latest
           - name: fedora
             image: fedora:latest
           - name: archlinux
@@ -65,6 +67,10 @@ jobs:
             image: gentoo/stage3:latest
           - name: nixos
             image: nixos/nix:latest
+          - name: mageia
+            image: mageia:latest
+          - name: photon
+            image: photon:latest
 
         exclude:
           - arch: arm64
@@ -81,6 +87,10 @@ jobs:
             distro: { name: devuan }
           - arch: 386
             distro: { name: devuan }
+          - arch: armv7
+            distro: { name: parrot }
+          - arch: 386
+            distro: { name: parrot }
           - arch: 386
             distro: { name: fedora }
           - arch: armv7
@@ -145,6 +155,14 @@ jobs:
             distro: { name: nixos }
           - arch: 386
             distro: { name: nixos }
+          - arch: 386
+            distro: { name: mageia }
+          - arch: armv7
+            distro: { name: mageia }
+          - arch: 386
+            distro: { name: photon }
+          - arch: armv7
+            distro: { name: photon }
 
     steps:
       - name: Checkout Repository
