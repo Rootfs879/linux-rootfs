@@ -31,6 +31,9 @@ All builds are regularly kept up-to-date with the latest release packages.
 | **Gentoo** | `tar.gz` |
 | **NixOS** | `tar.gz` |
 | **Devuan** | `.tar.gz` |
+| **Parrot** | `.tar.gz` |
+| **Mageia**| `.tar.gz` |
+| **Photon**| `.tar.gz` |
 
 ---
 
