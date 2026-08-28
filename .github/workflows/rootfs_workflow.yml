@@ -1,5 +1,10 @@
 name: Daily Multi-Architecture RootFS Generator
 
+env:
+  ACTIONS_RUNNER_PRINT_LOG_TO_STDOUT: 'true'
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: 'true'
+  ACTIONS_NODE_OPTION: '--no-deprecation'
+
 on:
   schedule:
     - cron: '0 5,11,17,23 * * *'
