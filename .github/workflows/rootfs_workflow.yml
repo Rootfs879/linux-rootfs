@@ -6,8 +6,8 @@ env:
   ACTIONS_NODE_OPTION: '--no-deprecation'
 
 on:
-  schedule:
-    - cron: '0 5,11,17,23 * * *'
+ #  schedule:
+    # - cron: '0 5,11,17,23 * * *'
   workflow_dispatch:
     inputs:
       force_build:
